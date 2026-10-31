@@ -70,16 +70,16 @@ Prometheus monitors all services
 
 ## Technology Stack
 
-| Component | Technology |
-|------------|------------|
-| Containerisation | Docker Compose |
-| Data Collection | Python |
-| Data Streaming | Apache Kafka |
-| Data Processing | Apache Spark |
-| Database | PostgreSQL |
-| Visualisation | Grafana |
-| Monitoring | Prometheus |
-| Version Control | Git & GitHub |
+| Component             | Technology     |
+|-----------------------|----------------|
+| Containerisation      | Docker Compose |
+| Data Collection       | Python         |         
+| Data Streaming        | Apache Kafka   |
+| Data Processing       | Apache Spark   |
+| Database              | PostgreSQL     |
+| Visualisation         | Grafana        |
+| Monitoring            | Prometheus     |
+| Version Control       | Git & GitHub   |
 
 ---
 
