@@ -32,14 +32,16 @@ while True:
 
         print("Data:", data)
 
-        producer.send(
-            "renewable-energy",
-            value=data
-        )
+        future = producer.send(
+           "renewable-energy",
+              value=data
+            )
+
+        record_metadata = future.get(timeout=10)
+
+        print(record_metadata)
 
         producer.flush()
-
-        print("Message sent successfully")
         print("--------------------------------")
 
         time.sleep(5)
