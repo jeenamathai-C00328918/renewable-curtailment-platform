@@ -21,3 +21,16 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
 
     restart: unless-stopped
+  postgres:
+    image: postgres:16
+    container_name: postgres
+
+    environment:
+      POSTGRES_DB: energydb
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+
+    ports:
+      - "5432:5432"
+
+    restart: unless-stopped
