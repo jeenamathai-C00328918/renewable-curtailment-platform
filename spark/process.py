@@ -31,8 +31,8 @@ print("✅ Spark started!")
 df = spark.readStream \
     .format("kafka") \
     .option(
-        "kafka.bootstrap.servers",
-        "localhost:9092"
+    "kafka.bootstrap.servers",
+    "localhost:9092,localhost:9093,localhost:9094"
     ) \
     .option(
         "subscribe",

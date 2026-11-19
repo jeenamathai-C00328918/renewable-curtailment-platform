@@ -8,7 +8,11 @@ print("Starting producer...")
 
 try:
     producer = KafkaProducer(
-        bootstrap_servers='localhost:9092',
+        bootstrap_servers=[
+            'localhost:9092',
+            'localhost:9093',
+            'localhost:9094'
+        ],
         value_serializer=lambda v: json.dumps(v).encode('utf-8')
     )
 
