@@ -1,157 +1,139 @@
-
 # Building a Real-Time Data Infrastructure for Renewable Electricity Curtailment Research in Ireland
 
 ## Project Overview
 
-Ireland is rapidly increasing the use of renewable energy sources, particularly wind power. However, there are periods when the electricity grid cannot accommodate all available renewable generation due to factors such as high renewable output, low electricity demand, or transmission constraints. This situation is known as **renewable electricity curtailment**.
-
-The aim of this project is to design and implement a real-time data infrastructure that can collect, process, store, visualize, and monitor renewable energy and electricity grid data. The platform will provide the technical foundation for future machine learning research on renewable electricity curtailment prediction in Ireland.
-
-This project is being developed as part of a Big Data Infrastructure module.
-
----
-
-## Project Objectives
-
-The project will:
-
-- Collect renewable energy and electricity grid data.
-- Stream data in real time using Apache Kafka.
-- Process incoming data using Apache Spark.
-- Store processed data in PostgreSQL.
-- Display key metrics using Grafana dashboards.
-- Monitor system health using Prometheus.
-- Demonstrate failure and recovery scenarios.
-- Deploy all components using Docker Compose.
-- Create a reusable platform suitable for future machine learning applications.
-
----
-
-## Research Context
-
-### Current Literature Review
-
-**Machine Learning Applications for Renewable Electricity Curtailment Prediction: A Literature Review with Implications for Ireland**
-
-### Future Dissertation Topic
-
-**Explainable Machine Learning for Renewable Electricity Curtailment Prediction in Ireland: Investigating the Impact of Weather Conditions, Electricity Demand, and Grid Constraints**
-
-### Relationship to This Project
-
-This project focuses on building the underlying data infrastructure required for future machine learning research. While no predictive model is developed in this project, the platform is designed to provide a scalable and reliable data pipeline that can later support machine learning and explainable AI solutions.
+This project implements a real-time streaming data platform for renewable electricity curtailment research in Ireland. The platform continuously generates renewable energy data, streams it through Apache Kafka, processes it using Apache Spark Structured Streaming, stores it in PostgreSQL, and visualizes results through Grafana dashboards. Prometheus is used for monitoring and observability.
 
 ---
 
 ## System Architecture
 
 ```text
-EirGrid Data / Simulated Data
-            │
-            ▼
-     Python Producer
-            │
-            ▼
-          Kafka
-            │
-            ▼
-          Spark
-            │
-            ▼
-       PostgreSQL
-            │
-            ▼
-         Grafana
+Python Producer
+      ↓
+Apache Kafka
+      ↓
+Apache Spark Structured Streaming
+      ↓
+PostgreSQL
+      ↓
+Grafana Dashboard
 
-Prometheus monitors all services
+Prometheus Monitoring
 ```
 
 ---
 
-## Technology Stack
+## Technologies Used
 
-| Component             | Technology     |
-|-----------------------|----------------|
-| Containerisation      | Docker Compose |
-| Data Collection       | Python         |         
-| Data Streaming        | Apache Kafka   |
-| Data Processing       | Apache Spark   |
-| Database              | PostgreSQL     |
-| Visualisation         | Grafana        |
-| Monitoring            | Prometheus     |
-| Version Control       | Git & GitHub   |
-
----
-
-## Planned Data Sources
-
-### Preferred Source
-
-- EirGrid Open Data
-
-Potential data includes:
-
-- Wind generation
-- Electricity demand
-- System load
-- Grid performance metrics
-
-### Alternative Source
-
-If direct integration is unavailable during development, realistic simulated renewable-energy data will be generated using Python.
+| Technology | Purpose |
+|------------|---------|
+| Python | Data generation and streaming |
+| Apache Kafka | Stream ingestion and message broker |
+| Apache Spark Structured Streaming | Real-time stream processing |
+| PostgreSQL | Persistent data storage |
+| Grafana | Data visualisation and dashboards |
+| Prometheus | Monitoring and observability |
+| Docker Compose | Container orchestration |
+| Java 17 | Spark runtime dependency |
 
 ---
 
-## Project Development Roadmap
+## Features
 
-### Phase 1: Project Setup
+### Real-Time Data Generation
 
-- [x] Install Docker Desktop
-- [x] Create project structure
-- [x] Create Git repository
-- [x] Create README documentation
+The Python producer continuously generates renewable electricity data consisting of:
 
-### Phase 2: Data Streaming
+- Timestamp
+- Wind Generation (MW)
+- Electricity Demand (MW)
 
-- [x] Configure Apache Kafka
-- [x] Create Kafka topic
-- [x] Develop Python data producer
+Example:
 
-### Phase 3: Data Processing
+```json
+{
+  "timestamp": "2026-11-19T22:30:10",
+  "wind_generation": 2450,
+  "electricity_demand": 5200
+}
+```
 
-- [ ] Configure Apache Spark
-- [ ] Process incoming Kafka data
-- [ ] Generate aggregated metrics
+---
 
-### Phase 4: Data Storage
+### Data Streaming
 
-- [ ] Configure PostgreSQL
-- [ ] Store processed records
-- [ ] Validate stored data
+Apache Kafka receives streaming data through the topic:
 
-### Phase 5: Visualisation
+```text
+renewable-energy
+```
 
-- [ ] Configure Grafana
-- [ ] Build monitoring dashboard
-- [ ] Create renewable energy charts
+The producer publishes renewable energy records to Kafka in real time.
 
-### Phase 6: Monitoring
+---
 
-- [ ] Configure Prometheus
-- [ ] Monitor service health
-- [ ] Collect infrastructure metrics
+### Real-Time Processing
 
-### Phase 7: Resilience Testing
+Apache Spark Structured Streaming:
 
-- [ ] Simulate service failures
-- [ ] Demonstrate service recovery
-- [ ] Validate monitoring alerts
+- Consumes messages from Kafka
+- Parses JSON records
+- Converts records into structured columns
+- Processes micro-batches in real time
+- Writes processed data into PostgreSQL
 
-### Phase 8: Documentation
+---
 
-- [ ] Technical report
-- [ ] Architecture documentation
-- [ ] Screencast demonstration
+### Data Storage
+
+Renewable energy data is stored in PostgreSQL.
+
+Table:
+
+```sql
+renewable_energy
+```
+
+Schema:
+
+```sql
+CREATE TABLE IF NOT EXISTS renewable_energy (
+    id SERIAL PRIMARY KEY,
+    timestamp TIMESTAMP,
+    wind_generation INTEGER,
+    electricity_demand INTEGER
+);
+```
+
+---
+
+### Data Visualisation
+
+Grafana dashboards provide:
+
+- Wind Generation Over Time
+- Electricity Demand Over Time
+- Renewable Energy Monitoring
+
+Example Dashboard Panels:
+
+- Wind Generation Trend
+- Electricity Demand Trend
+- Real-Time Data Visualisation
+
+---
+
+### Monitoring and Observability
+
+Prometheus is used to:
+
+- Monitor service health
+- Monitor platform availability
+- Collect performance metrics
+- Support infrastructure observability
+
+Grafana can also be used to visualize Prometheus metrics.
 
 ---
 
@@ -159,15 +141,13 @@ If direct integration is unavailable during development, realistic simulated ren
 
 ```text
 renewable-curtailment-platform/
-│
-├── docker-compose.yml
-├── README.md
-│
+
 ├── producer/
 │   └── producer.py
 │
 ├── spark/
-│   └── process.py
+│   ├── process.py
+│   └── test_postgres.py
 │
 ├── postgres/
 │   └── init.sql
@@ -175,40 +155,214 @@ renewable-curtailment-platform/
 ├── prometheus/
 │   └── prometheus.yml
 │
-├── grafana/
+├── jars/
+│   └── postgresql-42.7.13.jar
 │
-└── docs/
+├── docker-compose.yml
+├── requirements.txt
+└── README.md
 ```
 
 ---
 
-## Assignment Requirements Coverage
+## Installation
 
-| Requirement | Solution |
-|------------|-----------|
-| Data Ingestion | Python Producer |
-| Data Streaming | Kafka |
-| Data Processing | Spark |
-| Data Storage | PostgreSQL |
-| Data Visualisation | Grafana |
-| Monitoring | Prometheus |
-| Containerised Deployment | Docker Compose |
-| Failure & Recovery | Service restart testing |
-| Infrastructure as Code | Docker Compose |
-| Documentation | README, Report, Screencast |
+### Clone Repository
+
+```bash
+git clone <repository-url>
+cd ifbd-ca3-jeena
+```
 
 ---
 
-## Expected Outcomes
+### Create Virtual Environment
 
-By the completion of this project, the platform will be capable of:
+```bash
+python3 -m venv venv
+```
 
-- Collecting renewable energy data in real time.
-- Processing and storing energy data efficiently.
-- Visualising key energy trends and metrics.
-- Monitoring system health and performance.
-- Demonstrating resilience through failure and recovery testing.
-- Providing a foundation for future machine learning research on renewable electricity curtailment in Ireland.
+Activate the environment:
+
+```bash
+source venv/bin/activate
+```
+
+---
+
+### Install Dependencies
+
+```bash
+python3 -m pip install -r requirements.txt
+```
+
+---
+
+## Starting the Infrastructure
+
+Start all Docker services:
+
+```bash
+docker compose up -d
+```
+
+Verify containers:
+
+```bash
+docker ps
+```
+
+Expected services:
+
+```text
+kafka
+postgres
+grafana
+prometheus
+```
+
+---
+
+## Running the Application
+
+### Terminal 1 – Start the Producer
+
+```bash
+source venv/bin/activate
+
+python3 producer/producer.py
+```
+
+---
+
+### Terminal 2 – Start Spark Streaming
+
+```bash
+source venv/bin/activate
+
+python3 spark/process.py
+```
+
+---
+
+## Accessing Services
+
+### Grafana
+
+```text
+http://localhost:3000
+```
+
+Default credentials:
+
+```text
+Username: admin
+Password: admin
+```
+
+---
+
+### Prometheus
+
+```text
+http://localhost:9090
+```
+
+---
+
+### PostgreSQL
+
+Connect:
+
+```bash
+docker exec -it postgres psql -U admin -d energydb
+```
+
+View records:
+
+```sql
+SELECT * FROM renewable_energy;
+```
+
+Count records:
+
+```sql
+SELECT COUNT(*) FROM renewable_energy;
+```
+
+---
+
+## Dashboards
+
+### Renewable Energy Monitoring Dashboard
+
+Provides:
+
+- Wind Generation Over Time
+- Electricity Demand Over Time
+- Live Renewable Energy Metrics
+
+### System Monitoring Dashboard
+
+Provides:
+
+- Prometheus Metrics
+- Service Availability Monitoring
+- Platform Health Monitoring
+
+---
+
+## Current Status
+
+### Completed
+
+- ✅ Docker Infrastructure
+- ✅ Apache Kafka Streaming
+- ✅ Python Data Producer
+- ✅ Spark Structured Streaming
+- ✅ PostgreSQL Persistence
+- ✅ Grafana Dashboards
+- ✅ Prometheus Monitoring
+
+---
+
+## Testing
+
+Verify data is flowing into PostgreSQL:
+
+```sql
+SELECT COUNT(*) FROM renewable_energy;
+```
+
+The count should continuously increase while:
+
+```bash
+python3 producer/producer.py
+```
+
+and
+
+```bash
+python3 spark/process.py
+```
+
+are running.
+
+---
+
+## AI Usage Statement
+
+Microsoft Copilot was used to assist with:
+
+- Docker Compose configuration
+- Apache Kafka setup
+- Apache Spark Structured Streaming development
+- PostgreSQL integration
+- Grafana dashboard configuration
+- Prometheus monitoring setup
+- Documentation preparation
+
+All generated code and configurations were reviewed, tested, modified where necessary, and validated by the project author before inclusion in the project.
 
 ---
 
@@ -216,8 +370,6 @@ By the completion of this project, the platform will be capable of:
 
 **Jeena Mathai**
 
-MSc Data Science
+Infrastructure for Big Data (IFBD)
 
 South East Technological University (SETU)
-
-Academic Year 2026/2027
