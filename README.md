@@ -1,4 +1,4 @@
-# Building a Real-Time Data Infrastructure for Renewable Electricity Curtailment Research in Ireland
+# Building a Streaming Data Infrastructure for Renewable Electricity Curtailment Research in Ireland
 
 ## Project Overview
 
